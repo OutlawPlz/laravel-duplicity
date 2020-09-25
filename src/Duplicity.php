@@ -120,14 +120,10 @@ class Duplicity
 
     /**
      * Reset command status.
-     *
-     * @return $this
      */
-    public function clearCommand(): Duplicity
+    protected function clearCommand()
     {
         $this->command = [];
-
-        return $this;
     }
 
     /**
