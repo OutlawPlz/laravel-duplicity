@@ -51,7 +51,13 @@ class DuplicityBackup extends Command
         $duplicity = $this->duplicity
             ->progressBar()
             ->noEncryption()
-            ->backup('./', 'file://./backup');
+            ->exclude(
+                config('duplicity.excludes')
+            )
+            ->backup(
+                config('duplicity.backup_directory'),
+                config('duplicity.backup_to_url')
+            );
 
         $duplicity->mustRun(function ($type, $buffer) {
             echo $buffer;
