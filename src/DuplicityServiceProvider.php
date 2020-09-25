@@ -4,6 +4,7 @@ namespace Outlawplz\Duplicity;
 
 use Illuminate\Support\ServiceProvider;
 use Outlawplz\Duplicity\Commands\DuplicityBackup;
+use Outlawplz\Duplicity\Commands\DuplicityRestore;
 
 class DuplicityServiceProvider extends ServiceProvider
 {
@@ -36,7 +37,8 @@ class DuplicityServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                DuplicityBackup::class
+                DuplicityBackup::class,
+                DuplicityRestore::class,
             ]);
         }
     }
