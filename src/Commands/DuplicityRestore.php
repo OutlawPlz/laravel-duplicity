@@ -29,34 +29,20 @@ class DuplicityRestore extends Command
     protected $duplicity;
 
     /**
-     * Create a new command instance.
+     * Execute the console command.
      *
      * @param Duplicity $duplicity
-     * @return void
-     */
-    public function __construct(Duplicity $duplicity)
-    {
-        parent::__construct();
-
-        $this->duplicity = $duplicity;
-    }
-
-    /**
-     * Execute the console command.
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    public function handle()
+    public function handle(Duplicity $duplicity)
     {
-        $duplicity = $this->duplicity
+        $duplicity
             ->noEncryption()
             ->restore(
                 config('duplicity.restore_url'),
-                config('duplicity.restore_to_directory')
+                config('duplicity.restore_to_directory'),
+                function ($type, $buffer) { echo $buffer; }
             );
-
-        $duplicity->mustRun(function ($type, $buffer) {
-            echo $buffer;
-        });
     }
 }

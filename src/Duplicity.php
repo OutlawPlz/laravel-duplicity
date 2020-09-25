@@ -39,9 +39,12 @@ class Duplicity
      * @param string $fromDirectory
      * @param string $toUrl
      * @param string|null $backup Valid values are "full" and "incremental".
-     * @return Process
+     * @param callable|null $callback Anonymous function used to read real-time process output.
+     * @return string Process output.
+     *
+     * @link https://symfony.com/doc/current/components/process.html#getting-real-time-process-output Callback usage example.
      */
-    public function backup(string $fromDirectory, string $toUrl, string $backup = null): Process
+    public function backup(string $fromDirectory, string $toUrl, string $backup = null, callable $callback = null): string
     {
         $commands = ['duplicity'];
 
@@ -51,19 +54,22 @@ class Duplicity
 
         array_unshift($this->command, ...$commands);
 
-        return $this->process();
+        return $this->runProcess($callback);
     }
 
     /**
      * @param string $fromUrl
      * @param string $toDirectory
-     * @return Process
+     * @param callable|null $callback Anonymous function used to read real-time process output.
+     * @return string
+     *
+     * @link https://symfony.com/doc/current/components/process.html#getting-real-time-process-output Callback usage example.
      */
-    public function restore(string $fromUrl, string $toDirectory): Process
+    public function restore(string $fromUrl, string $toDirectory, callable $callback = null): string
     {
         array_unshift($this->command, 'duplicity', 'restore', $fromUrl, $toDirectory);
 
-        return $this->process();
+        return $this->runProcess($callback);
     }
 
     /**
@@ -129,16 +135,21 @@ class Duplicity
     /**
      * Build the process.
      *
-     * @return Process
+     * @param callable|null $callback
+     * @return string
+     *
+     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    protected function process(): Process
+    protected function runProcess(callable $callback = null): string
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
 
-        $process->setIdleTimeout(60);
-
         $this->clearCommand();
 
-        return $process;
+        $process->setIdleTimeout(60);
+
+        $process->mustRun($callback);
+
+        return $process->getOutput();
     }
 }

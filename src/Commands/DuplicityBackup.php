@@ -29,38 +29,25 @@ class DuplicityBackup extends Command
     protected $duplicity;
 
     /**
-     * Create a new command instance.
-     *
-     * @param Duplicity $duplicity
-     * @return void
-     */
-    public function __construct(Duplicity $duplicity)
-    {
-        parent::__construct();
-
-        $this->duplicity = $duplicity;
-    }
-
-    /**
      * Execute the console command.
+     *
+     * @param \Outlawplz\Duplicity\Duplicity $duplicity
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    public function handle()
+    public function handle(Duplicity $duplicity)
     {
-        $duplicity = $this->duplicity
-            ->progressBar()
+        $duplicity
             ->noEncryption()
+            ->progressBar()
             ->exclude(
                 config('duplicity.excludes')
             )
             ->backup(
                 config('duplicity.backup_directory'),
-                config('duplicity.backup_to_url')
+                config('duplicity.backup_to_url'),
+                null,
+                function ($type, $buffer) { echo $buffer; }
             );
-
-        $duplicity->mustRun(function ($type, $buffer) {
-            echo $buffer;
-        });
     }
 }

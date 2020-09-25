@@ -19,8 +19,8 @@ class DuplicityServiceProvider extends ServiceProvider
             __DIR__ . '../../config/duplicity.php', 'duplicity'
         );
 
-        $this->app->bind('duplicity', function () {
-            return new Duplicity();
+        $this->app->bind(Duplicity::class, function () {
+            return new Duplicity(base_path());
         });
     }
 
