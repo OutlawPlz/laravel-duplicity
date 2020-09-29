@@ -38,17 +38,15 @@ class Duplicity
     /**
      * @param string $fromDirectory
      * @param string $toUrl
-     * @param string|null $backup Valid values are "full" and "incremental".
-     * @param callable|null $callback Anonymous function used to read real-time process output.
+     * @param string|null $force Accepted values are "full" and "incremental".
+     * @param callable|null $callback
      * @return string Process output.
-     *
-     * @link https://symfony.com/doc/current/components/process.html#getting-real-time-process-output Callback usage example.
      */
-    public function backup(string $fromDirectory, string $toUrl, string $backup = null, callable $callback = null): string
+    public function backup(string $fromDirectory, string $toUrl, string $force = null, callable $callback = null): string
     {
         $commands = ['duplicity'];
 
-        if (! is_null($backup)) $commands[] = $backup;
+        if (! empty($force)) $commands[] = $force;
 
         array_push($commands, $fromDirectory, $toUrl);
 
@@ -60,10 +58,8 @@ class Duplicity
     /**
      * @param string $fromUrl
      * @param string $toDirectory
-     * @param callable|null $callback Anonymous function used to read real-time process output.
-     * @return string
-     *
-     * @link https://symfony.com/doc/current/components/process.html#getting-real-time-process-output Callback usage example.
+     * @param callable|null $callback
+     * @return string Process output.
      */
     public function restore(string $fromUrl, string $toDirectory, callable $callback = null): string
     {
@@ -79,7 +75,8 @@ class Duplicity
      */
     public function dryRun(): Duplicity
     {
-        $this->command[] = '--dry-run';
+        if (! in_array('--dry-run', $this->command))
+            $this->command[] = '--dry-run';
 
         return $this;
     }
@@ -91,7 +88,8 @@ class Duplicity
      */
     public function noEncryption(): Duplicity
     {
-        $this->command[] = '--no-encryption';
+        if (! in_array('--no-encryption', $this->command))
+            $this->command[] = '--no-encryption';
 
         return $this;
     }
@@ -103,7 +101,8 @@ class Duplicity
      */
     public function progressBar(): Duplicity
     {
-        $this->command[] = '--progress';
+        if (! in_array('--progress', $this->command))
+            $this->command[] = '--progress';
 
         return $this;
     }
@@ -111,13 +110,11 @@ class Duplicity
     /**
      * Exclude the file or files matched by shell_pattern.
      *
-     * @param string[] $excludes
+     * @param string|string[] $excludes
      * @return $this
      */
-    public function exclude(array $excludes = []): Duplicity
+    public function exclude(string ...$excludes): Duplicity
     {
-        if (empty($excludes)) return $this;
-
         foreach ($excludes as $path)
             array_push($this->command, '--exclude', $path);
 
@@ -125,31 +122,32 @@ class Duplicity
     }
 
     /**
-     * Reset command status.
-     */
-    protected function clearCommand()
-    {
-        $this->command = [];
-    }
-
-    /**
-     * Build the process.
+     * Instantiate a process and run it.
      *
      * @param callable|null $callback
      * @return string
-     *
-     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
     protected function runProcess(callable $callback = null): string
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
 
-        $this->clearCommand();
+        // Reset command status.
+        $this->command = [];
 
         $process->setIdleTimeout(60);
 
         $process->mustRun($callback);
 
         return $process->getOutput();
+    }
+
+    /**
+     * @param string $property
+     * @return mixed
+     */
+    public function __get(string $property)
+    {
+        if (property_exists($this, $property))
+            return $this->$property;
     }
 }

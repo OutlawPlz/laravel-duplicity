@@ -41,7 +41,7 @@ class DuplicityBackup extends Command
             ->noEncryption()
             ->progressBar()
             ->exclude(
-                config('duplicity.excludes')
+                ...config('duplicity.excludes')
             )
             ->backup(
                 config('duplicity.backup_directory'),
