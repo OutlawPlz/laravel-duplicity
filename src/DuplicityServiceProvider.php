@@ -20,7 +20,7 @@ class DuplicityServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(Duplicity::class, function () {
-            return new Duplicity(base_path());
+            return new Duplicity(base_path(), $this->env());
         });
     }
 
@@ -32,7 +32,7 @@ class DuplicityServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../../config/duplicity.php' => config_path('duplicity.php'),
+            __DIR__ . '/../../config/duplicity.php' => config_path('duplicity.php'),
         ]);
 
         if ($this->app->runningInConsole()) {
@@ -41,5 +41,20 @@ class DuplicityServiceProvider extends ServiceProvider
                 DuplicityRestore::class,
             ]);
         }
+    }
+
+    /**
+     * @return array|null
+     */
+    protected function env(): ?array
+    {
+        $env = [];
+
+        if ($ftpPassword = config('duplicity.ftp_password'))
+            $env['FTP_PASSWORD'] = $ftpPassword;
+
+        if (empty($env)) $env = null;
+
+        return $env;
     }
 }
