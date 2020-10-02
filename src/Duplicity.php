@@ -4,6 +4,9 @@ namespace Outlawplz\Duplicity;
 
 use Symfony\Component\Process\Process;
 
+/**
+ * @property-read string[] $command
+ */
 class Duplicity
 {
     /** @var string[] */
@@ -143,11 +146,12 @@ class Duplicity
 
     /**
      * @param string $property
-     * @return mixed
+     * @return string[]|null
      */
     public function __get(string $property)
     {
-        if (property_exists($this, $property))
-            return $this->$property;
+        if ($property !== 'command') return null;
+
+        return $this->command;
     }
 }
