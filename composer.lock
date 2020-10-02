@@ -4,8 +4,64 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4eb1dfdf9226add74508528f7efb224a",
+    "content-hash": "ef8473c26780a4dbb25b948d08de6012",
     "packages": [
+        {
+            "name": "spatie/db-dumper",
+            "version": "2.17.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/db-dumper.git",
+                "reference": "d23bcb566443e862a8dbb6dbd5e8da03aaf98e2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/d23bcb566443e862a8dbb6dbd5e8da03aaf98e2a",
+                "reference": "d23bcb566443e862a8dbb6dbd5e8da03aaf98e2a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "symfony/process": "^4.2|^5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\DbDumper\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Dump databases",
+            "homepage": "https://github.com/spatie/db-dumper",
+            "keywords": [
+                "database",
+                "db-dumper",
+                "dump",
+                "mysqldump",
+                "spatie"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-09-10T14:52:52+00:00"
+        },
         {
             "name": "symfony/polyfill-php80",
             "version": "v1.18.1",

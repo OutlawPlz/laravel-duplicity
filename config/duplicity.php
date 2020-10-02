@@ -12,6 +12,8 @@ return [
         './restore',
     ],
 
+    'database_dump' => env('DATABASE_NAME', 'database_dump') . '.sql',
+
     /*
     |--------------------------------------------------------------------------
     | FTP Password

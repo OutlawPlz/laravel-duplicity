@@ -3,6 +3,7 @@
 namespace Outlawplz\Duplicity\Commands;
 
 use Illuminate\Console\Command;
+use Outlawplz\Duplicity\DbDumperFactory;
 use Outlawplz\Duplicity\Duplicity;
 
 class DuplicityBackup extends Command
@@ -37,6 +38,14 @@ class DuplicityBackup extends Command
      */
     public function handle(Duplicity $duplicity)
     {
+        $dumper = DbDumperFactory::createFromConnection(
+            config('database.default')
+        );
+
+        $dumpFile = config('duplicity.database_dump');
+
+        $dumper->dumpToFile($dumpFile);
+
         $duplicity
             ->noEncryption()
             ->progressBar()
@@ -49,5 +58,7 @@ class DuplicityBackup extends Command
                 null,
                 function ($type, $buffer) { echo $buffer; }
             );
+
+        unlink($dumpFile);
     }
 }

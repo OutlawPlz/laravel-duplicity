@@ -76,7 +76,7 @@ class Duplicity
      *
      * @return $this
      */
-    public function dryRun(): Duplicity
+    public function dryRun(): self
     {
         if (! in_array('--dry-run', $this->command))
             $this->command[] = '--dry-run';
@@ -89,7 +89,7 @@ class Duplicity
      *
      * @return $this
      */
-    public function noEncryption(): Duplicity
+    public function noEncryption(): self
     {
         if (! in_array('--no-encryption', $this->command))
             $this->command[] = '--no-encryption';
@@ -102,7 +102,7 @@ class Duplicity
      *
      * @return $this
      */
-    public function progressBar(): Duplicity
+    public function progressBar(): self
     {
         if (! in_array('--progress', $this->command))
             $this->command[] = '--progress';
@@ -116,7 +116,7 @@ class Duplicity
      * @param string|string[] $excludes
      * @return $this
      */
-    public function exclude(string ...$excludes): Duplicity
+    public function exclude(string ...$excludes): self
     {
         foreach ($excludes as $path)
             array_push($this->command, '--exclude', $path);
