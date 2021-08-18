@@ -7,7 +7,7 @@ use Spatie\DbDumper\Databases\PostgreSql;
 use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbDumper\DbDumper;
 
-class DbDumperFactory
+class DatabaseDumperFactory
 {
     const DRIVERS = [
         'mysql' => MySql::class,
@@ -17,10 +17,12 @@ class DbDumperFactory
 
     /**
      * @param string $connection
-     * @return DbDumper
+     * @return DbDumper|null
      */
-    public static function createFromConnection(string $connection): DbDumper
+    public static function createFromConnection(string $connection): ?DbDumper
     {
+        if (! $connection) return null;
+
         /** @var DbDumper $dumper */
         $dumper = self::DRIVERS[$connection];
 

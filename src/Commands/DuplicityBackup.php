@@ -3,7 +3,7 @@
 namespace Outlawplz\Duplicity\Commands;
 
 use Illuminate\Console\Command;
-use Outlawplz\Duplicity\DbDumperFactory;
+use Outlawplz\Duplicity\DatabaseDumperFactory;
 use Outlawplz\Duplicity\Duplicity;
 
 class DuplicityBackup extends Command
@@ -32,21 +32,20 @@ class DuplicityBackup extends Command
     /**
      * Execute the console command.
      *
-     * @param \Outlawplz\Duplicity\Duplicity $duplicity
-     *
+     * @param Duplicity $duplicity
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
     public function handle(Duplicity $duplicity)
     {
-        $dumper = DbDumperFactory::createFromConnection(
+        $dumper = DatabaseDumperFactory::createFromConnection(
             config('database.default')
         );
 
         $dumpFile = config('duplicity.database_dump');
 
-        $dumper->dumpToFile($dumpFile);
+        $dumper?->dumpToFile($dumpFile);
 
-        $duplicity
+        $output = $duplicity
             ->noEncryption()
             ->progressBar()
             ->exclude(
@@ -59,6 +58,8 @@ class DuplicityBackup extends Command
                 function ($type, $buffer) { echo $buffer; }
             );
 
-        unlink($dumpFile);
+        $this->line($output);
+
+        if ($dumper) unlink($dumpFile);
     }
 }

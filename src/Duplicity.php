@@ -20,10 +20,11 @@ class Duplicity
      */
     public function __construct(
         protected ?string $cwd = null,
-        protected ?array $env = null,
-        protected mixed $input = null,
-        protected ?float $timeout = 3600
-    ) {
+        protected ?array  $env = null,
+        protected mixed   $input = null,
+        protected ?float  $timeout = 3600
+    )
+    {
     }
 
     /**
@@ -43,7 +44,11 @@ class Duplicity
 
         array_unshift($this->command, ...$commands);
 
-        return $this->runProcess($callback);
+        $output = $this->runProcess($callback);
+
+        $this->logResults($output);
+
+        return $output;
     }
 
     /**
@@ -126,6 +131,17 @@ class Duplicity
         $process->mustRun($callback);
 
         return $process->getOutput();
+    }
+
+    /**
+     * Log output result in JSON format.
+     *
+     * @param string $output
+     * @return void
+     */
+    protected function logResults(string $output): void
+    {
+        dd($output);
     }
 
     /**
