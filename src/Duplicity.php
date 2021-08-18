@@ -10,32 +10,20 @@ use Symfony\Component\Process\Process;
 class Duplicity
 {
     /** @var string[] */
-    protected $command = [];
-
-    /** @var string|null */
-    protected $cwd;
-
-    /** @var string[]|null */
-    protected $env;
-
-    /** @var mixed|null */
-    protected $input;
-
-    /** @var float|int|null */
-    protected $timeout;
+    protected array $command = [];
 
     /**
      * @param string|null $cwd
      * @param array|null $env
      * @param mixed|null $input
-     * @param float|int|null $timeout
+     * @param float|null $timeout
      */
-    public function __construct(string $cwd = null, array $env = null, $input = null, ?float $timeout = 3600)
-    {
-        $this->cwd = $cwd;
-        $this->env = $env;
-        $this->input = $input;
-        $this->timeout = $timeout;
+    public function __construct(
+        protected ?string $cwd = null,
+        protected ?array $env = null,
+        protected mixed $input = null,
+        protected ?float $timeout = 3600
+    ) {
     }
 
     /**
@@ -78,8 +66,7 @@ class Duplicity
      */
     public function dryRun(): self
     {
-        if (! in_array('--dry-run', $this->command))
-            $this->command[] = '--dry-run';
+        if (! in_array('--dry-run', $this->command)) $this->command[] = '--dry-run';
 
         return $this;
     }
@@ -91,8 +78,7 @@ class Duplicity
      */
     public function noEncryption(): self
     {
-        if (! in_array('--no-encryption', $this->command))
-            $this->command[] = '--no-encryption';
+        if (! in_array('--no-encryption', $this->command)) $this->command[] = '--no-encryption';
 
         return $this;
     }
@@ -104,8 +90,7 @@ class Duplicity
      */
     public function progressBar(): self
     {
-        if (! in_array('--progress', $this->command))
-            $this->command[] = '--progress';
+        if (! in_array('--progress', $this->command)) $this->command[] = '--progress';
 
         return $this;
     }
@@ -118,8 +103,7 @@ class Duplicity
      */
     public function exclude(string ...$excludes): self
     {
-        foreach ($excludes as $path)
-            array_push($this->command, '--exclude', $path);
+        foreach ($excludes as $path) array_push($this->command, '--exclude', $path);
 
         return $this;
     }
@@ -148,7 +132,7 @@ class Duplicity
      * @param string $property
      * @return string[]|null
      */
-    public function __get(string $property)
+    public function __get(string $property): ?array
     {
         if ($property !== 'command') return null;
 
