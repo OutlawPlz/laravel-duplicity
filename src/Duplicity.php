@@ -2,6 +2,9 @@
 
 namespace Outlawplz\Duplicity;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 /**
@@ -137,11 +140,33 @@ class Duplicity
      * Log output result in JSON format.
      *
      * @param string $output
-     * @return void
      */
-    protected function logResults(string $output): void
+    protected function logResults(string $output)
     {
-        dd($output);
+        $properties = [
+            'StartTime', 'EndTime', 'ElapsedTime', 'SourceFiles',
+            'SourceFileSize', 'NewFiles', 'NewFileSize', 'DeletedFiles',
+            'ChangedFiles', 'ChangedFileSize', 'DeltaEntries',
+            'RawDeltaSize', 'TotalDestinationSizeChange', 'Errors', 'Plpl'
+        ];
+
+        $stats = [];
+
+        foreach ($properties as $property) {
+            $found = preg_match("/$property (.*?)([ \n])/", $output, $matches);
+
+            if ($found) $stats[Str::snake($property)] = $matches[1];
+        }
+
+        try {
+            $log = json_decode(Storage::get('duplicity.json'));
+        } catch (FileNotFoundException $error) {
+            $log = [];
+        }
+
+        array_unshift($log, $stats);
+
+        Storage::put('duplicity.json', json_encode($log, JSON_PRETTY_PRINT));
     }
 
     /**
